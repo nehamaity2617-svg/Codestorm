@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive AI Learning Platform</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background-color: #f4f7fe;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: #1a202c;
+            color: #fff;
+        }
+        .sidebar .nav-link {
+            color: #a0aec0;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #3182ce;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+        }
+        .badge-weak { background-color: #fed7d7; color: #9b2c2c; }
+        .badge-medium { background-color: #feebc8; color: #9c4221; }
+        .badge-strong { background-color: #c6f6d5; color: #22543d; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
+            <h4 class="text-center text-primary mb-4 fw-bold"><i class="fa-solid fa-brain"></i> Adaptive AI</h4>
+            <hr class="text-secondary">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active"><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-book-open me-2"></i> Weak Concepts</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-file-pdf me-2"></i> AI PYQ Analyzer</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link"><i class="fa-solid fa-list-check me-2"></i> Tasks & Deadlines</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold text-dark">Welcome back, Student! 👋</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <button class="btn btn-primary btn-sm rounded-pill px-3 me-2" data-bs-toggle="modal" data-bs-target="#pyqModal">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate AI Question Bank
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOP STATS CARDS -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card card-custom p-3 border-start border-4 border-danger">
+                        <div class="d-flex align-items-center">
+                            <div class="fs-1 text-danger me-3"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div>
+                                <h6 class="text-muted mb-1">Top Weakness Found</h6>
+                                <h5 class="mb-0 fw-bold">Integration Rules</h5>
+                                <small class="text-danger">Mathematics (Chapter 4)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card card-custom p-3 border-start border-4 border-warning">
+                        <div class="d-flex align-items-center">
+                            <div class="fs-1 text-warning me-3"><i class="fa-solid fa-clock"></i></div>
+                            <div>
+                                <h6 class="text-muted mb-1">Next AI Deadline</h6>
+                                <h5 class="mb-0 fw-bold">Physics: Optics</h5>
+                                <small class="text-muted">Target: Tomorrow, 6:00 PM</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card card-custom p-3 border-start border-4 border-success">
+                        <div class="d-flex align-items-center">
+                            <div class="fs-1 text-success me-3"><i class="fa-solid fa-bullseye"></i></div>
+                            <div>
+                                <h6 class="text-muted mb-1">Predicted Board Score</h6>
+                                <h5 class="mb-0 fw-bold">82% <span class="fs-6 text-success">(+5% this week)</span></h5>
+                                <small class="text-muted">Based on recent tests</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRAPHS & HEATMAP SECTION -->
+            <div class="row g-3 mb-4">
+                
+                <!-- PERFORMANCE & RETENTION CHART -->
+                <div class="col-lg-8">
+                    <div class="card card-custom p-3">
+                        <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-column text-primary me-2"></i> Performance & Retention Analysis</h5>
+                        <canvas id="performanceChart" height="120"></canvas>
+                    </div>
+                </div>
+
+                <!-- CONCEPT MASTERY HEATMAP LIST -->
+                <div class="col-lg-4">
+                    <div class="card card-custom p-3">
+                        <h5 class="fw-bold mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i> Concept Mastery</h5>
+                        
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <div class="fw-bold">Trigonometry</div>
+                                    <small class="text-muted">Maths • Prerequisite Gap</small>
+                                </div>
+                                <span class="badge badge-weak rounded-pill">42% Weak</span>
+                            </div>
+
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <div class="fw-bold">Kinematics</div>
+                                    <small class="text-muted">Physics • Moderate</small>
+                                </div>
+                                <span class="badge badge-medium rounded-pill">68% Medium</span>
+                            </div>
+
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <div class="fw-bold">Organic Reactions</div>
+                                    <small class="text-muted">Chemistry • Strong</small>
+                                </div>
+                                <span class="badge badge-strong rounded-pill">90% Mastered</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-outline-primary btn-sm w-100 mt-3">View Full Knowledge Graph</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DYNAMIC DEADLINE & REVISION TASKS -->
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="card card-custom p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0"><i class="fa-solid fa-list-check text-primary me-2"></i> AI Recommended Micro-Tasks (Smart Schedule)</h5>
+                            <span class="badge bg-primary">Auto-Adjusted for Velocity</span>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Task / Concept</th>
+                                        <th>Subject</th>
+                                        <th>Reason</th>
+                                        <th>AI Adjusted Deadline</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-semibold">5-Min Formula Booster: Integration</td>
+                                        <td>Mathematics</td>
+                                        <td><span class="badge bg-danger">Remediation for low test score</span></td>
+                                        <td>Today, 8:00 PM</td>
+                                        <td><button class="btn btn-sm btn-primary">Start Task</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold">Optics Ray Diagram Practice</td>
+                                        <td>Physics</td>
+                                        <td><span class="badge bg-warning text-dark">High PYQ Weightage</span></td>
+                                        <td>Tomorrow, 6:00 PM</td>
+                                        <td><button class="btn btn-sm btn-outline-primary">Start Task</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- MODAL: AI PYQ QUESTION BANK GENERATOR -->
+<div class="modal fade" id="pyqModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i> AI Question Bank Generator</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pyqForm">
+                    <div class="mb-3">
+                        <label class="form-label font-semibold">Upload Past Year Question Papers (PYQ)</label>
+                        <input type="file" class="form-control" accept=".pdf, .png, .jpg">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Select Subject</label>
+                        <select class="form-select">
+                            <option>Mathematics</option>
+                            <option>Physics</option>
+                            <option>Chemistry</option>
+                        </select>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="focusWeakness" checked>
+                        <label class="form-check-label" for="focusWeakness">
+                            Prioritize questions from my weak concepts
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="alert('AI is analyzing PYQ and generating tailored questions!')">Analyze & Generate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js Script for Rendering Performance Graph -->
+<script>
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+            datasets: [{
+                label: 'Student Accuracy (%)',
+                data: [45, 52, 58, 65, 82],
+                borderColor: '#3182ce',
+                backgroundColor: 'rgba(49, 130, 206, 0.1)',
+                fill: true,
+                tension: 0.4
+            }, {
+                label: 'Retention Risk (Ebbinghaus Curve)',
+                data: [90, 75, 60, 50, 40],
+                borderColor: '#e53e3e',
+                borderDash: [5, 5],
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
