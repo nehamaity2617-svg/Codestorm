@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Adaptive AI Learning Platform</title>
     <!-- Bootstrap 5 CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- FontAwesome Icons -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -31,6 +25,7 @@
         color: #a0aec0;
         margin-bottom: 8px;
         border-radius: 8px;
+        cursor: pointer;
       }
       .sidebar .nav-link:hover,
       .sidebar .nav-link.active {
@@ -55,6 +50,14 @@
         background-color: #c6f6d5;
         color: #22543d;
       }
+      .task-completed {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+      .video-card iframe {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+      }
     </style>
   </head>
   <body>
@@ -66,241 +69,275 @@
             <i class="fa-solid fa-brain"></i> Adaptive AI
           </h4>
           <hr class="text-secondary" />
-          <ul class="nav nav-pills flex-column mb-auto">
+          <ul class="nav nav-pills flex-column mb-auto" id="sidebarMenu">
             <li class="nav-item">
-              <a href="#" class="nav-link active"
-                ><i class="fa-solid fa-chart-line me-2"></i> Dashboard</a
-              >
+              <a class="nav-link active" data-view="dashboard">
+                <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+              </a>
             </li>
             <li>
-              <a href="#" class="nav-link"
-                ><i class="fa-solid fa-book-open me-2"></i> Weak Concepts</a
-              >
+              <a class="nav-link" data-view="video-lectures">
+                <i class="fa-solid fa-circle-play me-2"></i> Video Lectures
+              </a>
             </li>
             <li>
-              <a href="#" class="nav-link"
-                ><i class="fa-solid fa-file-pdf me-2"></i> AI PYQ Analyzer</a
-              >
+              <a class="nav-link" data-view="weak-concepts">
+                <i class="fa-solid fa-book-open me-2"></i> Weak Concepts
+              </a>
             </li>
             <li>
-              <a href="#" class="nav-link"
-                ><i class="fa-solid fa-list-check me-2"></i> Tasks & Deadlines</a
-              >
+              <a class="nav-link" data-view="pyq-analyzer">
+                <i class="fa-solid fa-file-pdf me-2"></i> AI PYQ Analyzer
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" data-view="tasks">
+                <i class="fa-solid fa-list-check me-2"></i> Tasks & Deadlines
+              </a>
             </li>
           </ul>
         </nav>
 
         <!-- MAIN CONTENT AREA -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-          <!-- HEADER WITH DYNAMIC LOGIN LOGIC -->
-          <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom"
-          >
-            <!-- Dynamic Welcome Text -->
+          <!-- HEADER -->
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2 fw-bold text-dark" id="welcomeText">
               Welcome! Please Log In. 👋
             </h1>
 
             <div class="btn-toolbar mb-2 mb-md-0">
-              <!-- Auth Buttons -->
-              <a
-                href="register.html"
-                class="btn btn-outline-dark btn-sm rounded-pill px-3 me-2"
-                id="registerBtn"
-                >Register</a
-              >
-              <a
-                href="login.html"
-                class="btn btn-outline-dark btn-sm rounded-pill px-3 me-2"
-                id="loginBtn"
-                >Log In</a
-              >
-              <button
-                class="btn btn-danger btn-sm rounded-pill px-3 me-2"
-                id="logoutBtn"
-                style="display: none"
-              >
+              <a href="register.html" class="btn btn-outline-dark btn-sm rounded-pill px-3 me-2" id="registerBtn">
+                Register
+              </a>
+              <a href="login.html" class="btn btn-outline-dark btn-sm rounded-pill px-3 me-2" id="loginBtn">
+                Log In
+              </a>
+              <button class="btn btn-danger btn-sm rounded-pill px-3 me-2" id="logoutBtn" style="display: none;">
                 Log Out
               </button>
-
-              <button
-                class="btn btn-primary btn-sm rounded-pill px-3 me-2"
-                data-bs-toggle="modal"
-                data-bs-target="#pyqModal"
-              >
-                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate AI
-                Question Bank
+              <button class="btn btn-primary btn-sm rounded-pill px-3 me-2" data-bs-toggle="modal" data-bs-target="#pyqModal">
+                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate AI Question Bank
               </button>
             </div>
           </div>
 
-          <!-- TOP STATS CARDS -->
-          <div class="row g-3 mb-4">
-            <div class="col-md-4">
-              <div
-                class="card card-custom p-3 border-start border-4 border-danger"
-              >
-                <div class="d-flex align-items-center">
-                  <div class="fs-1 text-danger me-3">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+          <!-- ============================== -->
+          <!-- VIEW 1: DASHBOARD CONTENT      -->
+          <!-- ============================== -->
+          <div id="dashboard-view">
+            <!-- TOP STATS CARDS -->
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <div class="card card-custom p-3 border-start border-4 border-danger">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-1 text-danger me-3"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div>
+                      <h6 class="text-muted mb-1">Top Weakness Found</h6>
+                      <h5 class="mb-0 fw-bold" id="statWeaknessName">No Data Yet</h5>
+                      <small id="statWeaknessDetail" class="text-muted">Take a test to identify</small>
+                    </div>
                   </div>
-                  <div>
-                    <h6 class="text-muted mb-1">Top Weakness Found</h6>
-                    <h5 class="mb-0 fw-bold" id="statWeaknessTitle">No Data Yet</h5>
-                    <small id="statWeaknessSub" class="text-muted">Take a test to identify</small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="card card-custom p-3 border-start border-4 border-warning">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-1 text-warning me-3"><i class="fa-solid fa-clock"></i></div>
+                    <div>
+                      <h6 class="text-muted mb-1">Next AI Deadline</h6>
+                      <h5 class="mb-0 fw-bold" id="statDeadlineName">None</h5>
+                      <small id="statDeadlineDetail" class="text-muted">No pending tasks</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="card card-custom p-3 border-start border-4 border-success">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-1 text-success me-3"><i class="fa-solid fa-bullseye"></i></div>
+                    <div>
+                      <h6 class="text-muted mb-1">Predicted Board Score</h6>
+                      <h5 class="mb-0 fw-bold" id="statScoreName">0%</h5>
+                      <small id="statScoreDetail" class="text-muted">Based on recent tests</small>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="col-md-4">
-              <div
-                class="card card-custom p-3 border-start border-4 border-warning"
-              >
-                <div class="d-flex align-items-center">
-                  <div class="fs-1 text-warning me-3">
-                    <i class="fa-solid fa-clock"></i>
-                  </div>
-                  <div>
-                    <h6 class="text-muted mb-1">Next AI Deadline</h6>
-                    <h5 class="mb-0 fw-bold" id="statDeadlineTitle">None</h5>
-                    <small id="statDeadlineSub" class="text-muted">No pending tasks</small>
-                  </div>
+            <!-- GRAPHS & HEATMAP SECTION -->
+            <div class="row g-3 mb-4">
+              <div class="col-lg-8">
+                <div class="card card-custom p-3">
+                  <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-column text-primary me-2"></i> Performance & Retention Analysis</h5>
+                  <canvas id="performanceChart" height="120"></canvas>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="card card-custom p-3">
+                  <h5 class="fw-bold mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i> Concept Mastery</h5>
+                  <div class="list-group list-group-flush" id="masteryList"></div>
+                  <button class="btn btn-outline-primary btn-sm w-100 mt-3" data-bs-toggle="modal" data-bs-target="#graphModal">
+                    View Full Knowledge Graph
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div class="col-md-4">
-              <div
-                class="card card-custom p-3 border-start border-4 border-success"
-              >
-                <div class="d-flex align-items-center">
-                  <div class="fs-1 text-success me-3">
-                    <i class="fa-solid fa-bullseye"></i>
+            <!-- DYNAMIC SCHEDULE TABLE -->
+            <div class="row g-3">
+              <div class="col-12">
+                <div class="card card-custom p-3">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-list-check text-primary me-2"></i> AI Recommended Micro-Tasks</h5>
+                    <span class="badge bg-primary">Auto-Adjusted for Velocity</span>
                   </div>
-                  <div>
-                    <h6 class="text-muted mb-1">Predicted Board Score</h6>
-                    <h5 class="mb-0 fw-bold" id="statScoreTitle">0%</h5>
-                    <small id="statScoreSub" class="text-muted">Based on recent tests</small>
+                  <div class="table-responsive">
+                    <table class="table align-middle">
+                      <thead>
+                        <tr>
+                          <th>Task / Concept</th>
+                          <th>Subject</th>
+                          <th>Reason</th>
+                          <th>AI Adjusted Deadline</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="taskListBody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END DASHBOARD VIEW -->
+
+          <!-- ============================== -->
+          <!-- VIEW 2: VIDEO LECTURES CONTENT -->
+          <!-- ============================== -->
+          <div id="video-lectures-view" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="fw-bold"><i class="fa-solid fa-circle-play text-primary me-2"></i> Video Library</h2>
+            </div>
+
+            <!-- Logged Out Message for Videos -->
+            <div id="videoLoggedOutMsg" class="text-center py-5" style="display: none;">
+              <i class="fa-solid fa-lock fs-1 text-muted mb-3"></i>
+              <h4>Please Log In</h4>
+              <p class="text-muted">You need to log in to access your tailored video lecture library.</p>
+            </div>
+
+            <!-- Logged In Video Content -->
+            <div id="videoContent" style="display: none;">
+              <!-- Subject Filters -->
+              <ul class="nav nav-pills mb-4">
+                <li class="nav-item"><a class="nav-link active" href="#" style="border-radius: 20px; padding: 5px 20px;">All Subjects</a></li>
+                <li class="nav-item ms-2"><a class="nav-link bg-light text-dark" href="#" style="border-radius: 20px; padding: 5px 20px;">Mathematics</a></li>
+                <li class="nav-item ms-2"><a class="nav-link bg-light text-dark" href="#" style="border-radius: 20px; padding: 5px 20px;">Physics</a></li>
+                <li class="nav-item ms-2"><a class="nav-link bg-light text-dark" href="#" style="border-radius: 20px; padding: 5px 20px;">Chemistry</a></li>
+              </ul>
+
+              <!-- Video Grid -->
+              <div class="row g-4">
+                <!-- Video 1 -->
+                <div class="col-md-6 col-lg-4">
+                  <div class="card card-custom video-card h-100">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/rfG8ce4nNh0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="card-body">
+                      <span class="badge bg-danger mb-2">Targeting Weakness</span>
+                      <h6 class="fw-bold">Integration Rules & Techniques</h6>
+                      <p class="text-muted small mb-0">Mathematics • 45 mins</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Video 2 -->
+                <div class="col-md-6 col-lg-4">
+                  <div class="card card-custom video-card h-100">
+                    <iframe width="100%" height="200" src="https://youtu.be/efPZ5uSDeuI?si=CjDm61_Fs7aycLsj" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="card-body">
+                      <span class="badge bg-warning text-dark mb-2">Upcoming Deadline</span>
+                      <h6 class="fw-bold">Optics: Ray Diagrams</h6>
+                      <p class="text-muted small mb-0">Physics • 30 mins</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Video 3 -->
+                <div class="col-md-6 col-lg-4">
+                  <div class="card card-custom video-card h-100">
+                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/3QIEGawX8ws" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="card-body">
+                      <span class="badge bg-success mb-2">Revision</span>
+                      <h6 class="fw-bold">Organic Chemistry Reactions</h6>
+                      <p class="text-muted small mb-0">Chemistry • 50 mins</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <!-- END VIDEO LECTURES VIEW -->
 
-          <!-- GRAPHS & HEATMAP SECTION -->
-          <div class="row g-3 mb-4">
-            <!-- PERFORMANCE & RETENTION CHART -->
-            <div class="col-lg-8">
-              <div class="card card-custom p-3">
-                <h5 class="fw-bold mb-3">
-                  <i class="fa-solid fa-chart-column text-primary me-2"></i>
-                  Performance & Retention Analysis
-                </h5>
-                <canvas id="performanceChart" height="120"></canvas>
-              </div>
-            </div>
-
-            <!-- CONCEPT MASTERY HEATMAP LIST -->
-            <div class="col-lg-4">
-              <div class="card card-custom p-3">
-                <h5 class="fw-bold mb-3">
-                  <i class="fa-solid fa-layer-group text-primary me-2"></i>
-                  Concept Mastery
-                </h5>
-
-                <div class="list-group list-group-flush" id="masteryListContainer">
-                  <!-- Dynamically populated via JS -->
-                </div>
-
-                <button class="btn btn-outline-primary btn-sm w-100 mt-3">
-                  View Full Knowledge Graph
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- DYNAMIC DEADLINE & REVISION TASKS -->
-          <div class="row g-3">
-            <div class="col-12">
-              <div class="card card-custom p-3">
-                <div
-                  class="d-flex justify-content-between align-items-center mb-3"
-                >
-                  <h5 class="fw-bold mb-0">
-                    <i class="fa-solid fa-list-check text-primary me-2"></i> AI
-                    Recommended Micro-Tasks (Smart Schedule)
-                  </h5>
-                  <span class="badge bg-primary"
-                    >Auto-Adjusted for Velocity</span
-                  >
-                </div>
-
-                <div class="table-responsive">
-                  <table class="table align-middle">
-                    <thead>
-                      <tr>
-                        <th>Task / Concept</th>
-                        <th>Subject</th>
-                        <th>Reason</th>
-                        <th>AI Adjusted Deadline</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tasksTableBody">
-                      <!-- Dynamically populated via JS -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
         </main>
       </div>
     </div>
 
-    <!-- MODAL: AI PYQ QUESTION BANK GENERATOR -->
+    <!-- MODAL 1: AUTHENTICATION (LOGIN / REGISTER) -->
+    <div class="modal fade" id="authModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="authModalTitle">Log In</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+              <div class="mb-3">
+                <label class="form-label">Email address</label>
+                <input type="email" class="form-control" id="authEmail" required placeholder="student@example.com" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="authPassword" required placeholder="••••••••" />
+              </div>
+              <button type="submit" class="btn btn-primary w-100" id="authSubmitBtn">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: AI PYQ QUESTION BANK GENERATOR -->
     <div class="modal fade" id="pyqModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title fw-bold">
-              <i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>
-              AI Question Bank Generator
+              <i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i> AI Question Bank Generator
             </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <form id="pyqForm">
               <div class="mb-3">
-                <label class="form-label font-semibold"
-                  >Upload Past Year Question Papers (PYQ)</label
-                >
-                <input
-                  type="file"
-                  class="form-control"
-                  accept=".pdf, .png, .jpg"
-                />
+                <label class="form-label fw-semibold">Upload Past Year Question Papers (PYQ)</label>
+                <input type="file" class="form-control" id="pyqFileInput" accept=".pdf, .png, .jpg" />
               </div>
               <div class="mb-3">
                 <label class="form-label">Select Subject</label>
-                <select class="form-select">
-                  <option>Mathematics</option>
-                  <option>Physics</option>
-                  <option>Chemistry</option>
+                <select class="form-select" id="pyqSubjectSelect">
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
                 </select>
               </div>
               <div class="form-check mb-3">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="focusWeakness"
-                  checked
-                />
+                <input class="form-check-input" type="checkbox" id="focusWeakness" checked />
                 <label class="form-check-label" for="focusWeakness">
                   Prioritize questions from my weak concepts
                 </label>
@@ -308,22 +345,32 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              onclick="
-                alert('AI is analyzing PYQ and generating tailored questions!')
-              "
-            >
-              Analyze & Generate
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="analyzeBtn" onclick="runAIAnalysis()">Analyze & Generate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: KNOWLEDGE GRAPH -->
+    <div class="modal fade" id="graphModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold"><i class="fa-solid fa-diagram-project text-primary me-2"></i> Concept Knowledge Graph</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-center py-4">
+            <div class="p-4 bg-light rounded border">
+              <i class="fa-solid fa-network-wired fs-1 text-primary mb-3"></i>
+              <h5>Prerequisite Gap Mapping</h5>
+              <p class="text-muted">Trigonometric Identities $\rightarrow$ Differential Equations $\rightarrow$ Integration Rules</p>
+              <div class="progress my-3" style="height: 20px;">
+                <div class="progress-bar bg-danger" style="width: 42%">Trigonometry (42%)</div>
+                <div class="progress-bar bg-warning" style="width: 26%">Kinematics (68%)</div>
+                <div class="progress-bar bg-success" style="width: 32%">Organic (90%)</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -332,188 +379,275 @@
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Main Dynamic Progress & Authentication Script -->
+    <!-- FULL INTERACTIVE APP LOGIC -->
     <script>
+      let chartInstance = null;
+      let currentAuthMode = 'login';
+
+      const DEFAULT_TASKS = [
+        { id: 1, title: "5-Min Formula Booster: Integration", subject: "Mathematics", reason: "Remediation for low test score", deadline: "Today, 8:00 PM", completed: false },
+        { id: 2, title: "Optics Ray Diagram Practice", subject: "Physics", reason: "High PYQ Weightage", deadline: "Tomorrow, 6:00 PM", completed: false }
+      ];
+
       document.addEventListener("DOMContentLoaded", () => {
-        // 1. Check Authentication Session
+        setupSidebarNavigation();
+        setupLogout();
+        renderDashboard();
+      });
+
+      // --- 1. SPA NAVIGATION LOGIC ---
+      function setupSidebarNavigation() {
+        const links = document.querySelectorAll('#sidebarMenu .nav-link');
+        const dashboardView = document.getElementById('dashboard-view');
+        const videoLecturesView = document.getElementById('video-lectures-view');
+
+        links.forEach(link => {
+          link.addEventListener('click', (e) => {
+            links.forEach(l => l.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+
+            const targetView = e.currentTarget.getAttribute('data-view');
+            
+            if (targetView === 'dashboard') {
+              dashboardView.style.display = 'block';
+              videoLecturesView.style.display = 'none';
+            } else if (targetView === 'video-lectures') {
+              dashboardView.style.display = 'none';
+              videoLecturesView.style.display = 'block';
+            } else {
+              alert("This feature is coming soon!");
+              links.forEach(l => l.classList.remove('active'));
+              document.querySelector('[data-view="dashboard"]').classList.add('active');
+              dashboardView.style.display = 'block';
+              videoLecturesView.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      // --- 2. AUTHENTICATION HANDLERS ---
+      function setAuthMode(mode) {
+        currentAuthMode = mode;
+        document.getElementById('authModalTitle').innerText = mode === 'login' ? 'Log In' : 'Register New Account';
+        document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'Log In' : 'Register & Start';
+      }
+
+      function handleAuthSubmit(event) {
+        event.preventDefault();
+        const email = document.getElementById('authEmail').value;
+
+        localStorage.setItem("userToken", "jwt_token_demo_12345");
+        localStorage.setItem("userEmail", email);
+
+        if (!localStorage.getItem(`userTasks_${email}`)) {
+          localStorage.setItem(`userTasks_${email}`, JSON.stringify(DEFAULT_TASKS));
+          localStorage.setItem(`userScore_${email}`, "82");
+        }
+
+        const authModalEl = document.getElementById('authModal');
+        const modalInstance = bootstrap.Modal.getInstance(authModalEl);
+        if (modalInstance) modalInstance.hide();
+
+        renderDashboard();
+      }
+
+      function setupLogout() {
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem("userToken");
+          localStorage.removeItem("userEmail");
+          
+          document.querySelector('[data-view="dashboard"]').click();
+          renderDashboard();
+        });
+      }
+
+      // --- 3. RENDER ALL STATE (DASHBOARD & VIDEOS) ---
+      function renderDashboard() {
         const token = localStorage.getItem("userToken");
         const userEmail = localStorage.getItem("userEmail");
 
-        // Elements
         const loginBtn = document.getElementById("loginBtn");
         const registerBtn = document.getElementById("registerBtn");
         const logoutBtn = document.getElementById("logoutBtn");
         const welcomeText = document.getElementById("welcomeText");
+        
+        const videoLoggedOutMsg = document.getElementById("videoLoggedOutMsg");
+        const videoContent = document.getElementById("videoContent");
 
-        const statWeaknessTitle = document.getElementById("statWeaknessTitle");
-        const statWeaknessSub = document.getElementById("statWeaknessSub");
-        const statDeadlineTitle = document.getElementById("statDeadlineTitle");
-        const statDeadlineSub = document.getElementById("statDeadlineSub");
-        const statScoreTitle = document.getElementById("statScoreTitle");
-        const statScoreSub = document.getElementById("statScoreSub");
+        if (token && userEmail) {
+          // --- LOGGED IN ---
+          loginBtn.style.display = "none";
+          registerBtn.style.display = "none";
+          logoutBtn.style.display = "inline-block";
 
-        const masteryListContainer = document.getElementById("masteryListContainer");
-        const tasksTableBody = document.getElementById("tasksTableBody");
+          videoLoggedOutMsg.style.display = "none";
+          videoContent.style.display = "block";
 
-        // Chart Datasets Initialization
-        let accuracyData = [0, 0, 0, 0, 0];
-        let retentionData = [0, 0, 0, 0, 0];
+          const displayName = userEmail.split("@")[0];
+          welcomeText.innerText = `Welcome back, ${displayName}! 👋`;
 
-        // 2. State-Based Rendering
-        if (token) {
-          // --- LOGGED IN STATE ---
-          if (loginBtn) loginBtn.style.display = "none";
-          if (registerBtn) registerBtn.style.display = "none";
-          if (logoutBtn) logoutBtn.style.display = "inline-block";
+          const score = localStorage.getItem(`userScore_${userEmail}`) || "82";
+          document.getElementById('statWeaknessName').innerText = "Integration Rules";
+          document.getElementById('statWeaknessDetail').innerText = "Mathematics (Chapter 4)";
+          document.getElementById('statWeaknessDetail').className = "text-danger";
 
-          const displayName = userEmail ? userEmail.split("@")[0] : "Student";
-          if (welcomeText) welcomeText.innerText = `Welcome back, ${displayName}! 👋`;
+          document.getElementById('statDeadlineName').innerText = "Physics: Optics";
+          document.getElementById('statDeadlineDetail').innerText = "Target: Tomorrow, 6:00 PM";
 
-          // Populate Stats Cards with Progress
-          statWeaknessTitle.innerText = "Integration Rules";
-          statWeaknessSub.innerText = "Mathematics (Chapter 4)";
-          statWeaknessSub.className = "text-danger";
+          document.getElementById('statScoreName').innerHTML = `${score}% <span class="fs-6 text-success">(+5% this week)</span>`;
 
-          statDeadlineTitle.innerText = "Physics: Optics";
-          statDeadlineSub.innerText = "Target: Tomorrow, 6:00 PM";
-          statDeadlineSub.className = "text-muted";
-
-          statScoreTitle.innerHTML = `82% <span class="fs-6 text-success">(+5% this week)</span>`;
-          statScoreSub.innerText = "Based on recent tests";
-
-          // Populate Mastery Heatmap List
-          masteryListContainer.innerHTML = `
-            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-              <div>
-                <div class="fw-bold">Trigonometry</div>
-                <small class="text-muted">Maths • Prerequisite Gap</small>
-              </div>
-              <span class="badge badge-weak rounded-pill">42% Weak</span>
-            </div>
-            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-              <div>
-                <div class="fw-bold">Kinematics</div>
-                <small class="text-muted">Physics • Moderate</small>
-              </div>
-              <span class="badge badge-medium rounded-pill">68% Medium</span>
-            </div>
-            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-              <div>
-                <div class="fw-bold">Organic Reactions</div>
-                <small class="text-muted">Chemistry • Strong</small>
-              </div>
-              <span class="badge badge-strong rounded-pill">90% Mastered</span>
-            </div>
-          `;
-
-          // Populate Micro-Tasks Table
-          tasksTableBody.innerHTML = `
-            <tr>
-              <td class="fw-semibold">5-Min Formula Booster: Integration</td>
-              <td>Mathematics</td>
-              <td><span class="badge bg-danger">Remediation for low test score</span></td>
-              <td>Today, 8:00 PM</td>
-              <td><button class="btn btn-sm btn-primary">Start Task</button></td>
-            </tr>
-            <tr>
-              <td class="fw-semibold">Optics Ray Diagram Practice</td>
-              <td>Physics</td>
-              <td><span class="badge bg-warning text-dark">High PYQ Weightage</span></td>
-              <td>Tomorrow, 6:00 PM</td>
-              <td><button class="btn btn-sm btn-outline-primary">Start Task</button></td>
-            </tr>
-          `;
-
-          // Active Chart Data
-          accuracyData = [45, 52, 58, 65, 82];
-          retentionData = [90, 75, 60, 50, 40];
-
+          renderMasteryList(true);
+          renderTasksTable(true);
+          renderChart([45, 52, 58, 65, parseInt(score)], [90, 75, 60, 50, 40]);
         } else {
-          // --- LOGGED OUT STATE (0 PROGRESS) ---
-          if (loginBtn) loginBtn.style.display = "inline-block";
-          if (registerBtn) registerBtn.style.display = "inline-block";
-          if (logoutBtn) logoutBtn.style.display = "none";
+          // --- LOGGED OUT ---
+          loginBtn.style.display = "inline-block";
+          registerBtn.style.display = "inline-block";
+          logoutBtn.style.display = "none";
+          
+          videoLoggedOutMsg.style.display = "block";
+          videoContent.style.display = "none";
 
-          if (welcomeText) welcomeText.innerText = "Welcome! Please Log In. 👋";
+          welcomeText.innerText = "Welcome! Please Log In. 👋";
 
-          // Clear Stats Cards
-          statWeaknessTitle.innerText = "No Data Yet";
-          statWeaknessSub.innerText = "Take a test to identify";
-          statWeaknessSub.className = "text-muted";
+          document.getElementById('statWeaknessName').innerText = "No Data Yet";
+          document.getElementById('statWeaknessDetail').innerText = "Take a test to identify";
+          document.getElementById('statWeaknessDetail').className = "text-muted";
 
-          statDeadlineTitle.innerText = "None";
-          statDeadlineSub.innerText = "No pending tasks";
+          document.getElementById('statDeadlineName').innerText = "None";
+          document.getElementById('statDeadlineDetail').innerText = "No pending tasks";
 
-          statScoreTitle.innerText = "0%";
-          statScoreSub.innerText = "(Need more data)";
+          document.getElementById('statScoreName').innerText = "0%";
 
-          // Empty Mastery List
-          masteryListContainer.innerHTML = `
-            <div class="text-center text-muted small py-4">
-              <i class="fa-solid fa-folder-open fs-3 mb-2 d-block text-secondary"></i>
-              No concepts analyzed yet. Please log in to view mastery.
-            </div>
-          `;
+          renderMasteryList(false);
+          renderTasksTable(false);
+          renderChart([0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
+        }
+      }
 
-          // Empty Tasks Table
-          tasksTableBody.innerHTML = `
-            <tr>
-              <td colspan="5" class="text-center text-muted py-4">
-                No tasks available. Log in to start your personalized learning pathway.
-              </td>
-            </tr>
-          `;
+      function renderMasteryList(isLoggedIn) {
+        const masteryContainer = document.getElementById('masteryList');
+        if (!isLoggedIn) {
+          masteryContainer.innerHTML = `<div class="text-center text-muted small py-4">No concepts analyzed yet. Please log in.</div>`;
+          return;
+        }
+        masteryContainer.innerHTML = `
+          <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <div><div class="fw-bold">Trigonometry</div><small class="text-muted">Maths • Prerequisite Gap</small></div>
+            <span class="badge badge-weak rounded-pill">42% Weak</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <div><div class="fw-bold">Kinematics</div><small class="text-muted">Physics • Moderate</small></div>
+            <span class="badge badge-medium rounded-pill">68% Medium</span>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <div><div class="fw-bold">Organic Reactions</div><small class="text-muted">Chemistry • Strong</small></div>
+            <span class="badge badge-strong rounded-pill">90% Mastered</span>
+          </div>
+        `;
+      }
 
-          // Zeroed Chart Data
-          accuracyData = [0, 0, 0, 0, 0];
-          retentionData = [0, 0, 0, 0, 0];
+      function renderTasksTable(isLoggedIn) {
+        const tableBody = document.getElementById('taskListBody');
+        if (!isLoggedIn) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">No tasks available. Log in to start.</td></tr>`;
+          return;
         }
 
-        // 3. Render Chart
+        const email = localStorage.getItem("userEmail");
+        const tasks = JSON.parse(localStorage.getItem(`userTasks_${email}`)) || DEFAULT_TASKS;
+
+        tableBody.innerHTML = tasks.map(task => `
+          <tr class="${task.completed ? 'task-completed' : ''}">
+            <td class="fw-semibold">${task.title}</td>
+            <td>${task.subject}</td>
+            <td><span class="badge bg-danger">${task.reason}</span></td>
+            <td>${task.deadline}</td>
+            <td>
+              <button class="btn btn-sm ${task.completed ? 'btn-success' : 'btn-primary'}" onclick="toggleTask(${task.id})">
+                ${task.completed ? '<i class="fa-solid fa-check me-1"></i> Completed' : 'Start Task'}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      function toggleTask(taskId) {
+        const email = localStorage.getItem("userEmail");
+        if (!email) return;
+
+        let tasks = JSON.parse(localStorage.getItem(`userTasks_${email}`)) || DEFAULT_TASKS;
+        tasks = tasks.map(t => {
+          if (t.id === taskId) t.completed = !t.completed;
+          return t;
+        });
+
+        localStorage.setItem(`userTasks_${email}`, JSON.stringify(tasks));
+        
+        let score = parseInt(localStorage.getItem(`userScore_${email}`) || "82");
+        score = Math.min(score + 2, 100);
+        localStorage.setItem(`userScore_${email}`, score.toString());
+
+        renderDashboard();
+      }
+
+      function runAIAnalysis() {
+        const email = localStorage.getItem("userEmail");
+        const token = localStorage.getItem("userToken");
+
+        if (!token || !email) {
+          alert("Please log in first!");
+          return;
+        }
+
+        const subject = document.getElementById('pyqSubjectSelect').value;
+        const btn = document.getElementById('analyzeBtn');
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Analyzing PYQ...`;
+
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = `Analyze & Generate`;
+
+          let tasks = JSON.parse(localStorage.getItem(`userTasks_${email}`)) || DEFAULT_TASKS;
+          const newTask = {
+            id: Date.now(),
+            title: `AI PYQ Quiz: ${subject} High Yield Questions`,
+            subject: subject,
+            reason: "Generated from Uploaded PYQ",
+            deadline: "Tomorrow, 8:00 PM",
+            completed: false
+          };
+          tasks.unshift(newTask);
+          localStorage.setItem(`userTasks_${email}`, JSON.stringify(tasks));
+
+          const modalEl = document.getElementById('pyqModal');
+          const modalInstance = bootstrap.Modal.getInstance(modalEl);
+          if (modalInstance) modalInstance.hide();
+
+          alert(`Success! AI has generated new ${subject} tasks based on your file.`);
+          renderDashboard();
+        }, 1200);
+      }
+
+      function renderChart(accuracyData, retentionData) {
         const ctx = document.getElementById("performanceChart").getContext("2d");
-        new Chart(ctx, {
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
           type: "line",
           data: {
             labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],
             datasets: [
-              {
-                label: "Student Accuracy (%)",
-                data: accuracyData,
-                borderColor: "#3182ce",
-                backgroundColor: "rgba(49, 130, 206, 0.1)",
-                fill: true,
-                tension: 0.4,
-              },
-              {
-                label: "Retention Risk (Ebbinghaus Curve)",
-                data: retentionData,
-                borderColor: "#e53e3e",
-                borderDash: [5, 5],
-                fill: false,
-              },
+              { label: "Student Accuracy (%)", data: accuracyData, borderColor: "#3182ce", backgroundColor: "rgba(49, 130, 206, 0.1)", fill: true, tension: 0.4 },
+              { label: "Retention Risk (Ebbinghaus Curve)", data: retentionData, borderColor: "#e53e3e", borderDash: [5, 5], fill: false },
             ],
           },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: "top" },
-            },
-            scales: {
-              y: { beginAtZero: true, max: 100 },
-            },
-          },
+          options: { responsive: true, plugins: { legend: { position: "top" } }, scales: { y: { beginAtZero: true, max: 100 } } },
         });
-
-        // 4. Logout Action
-        if (logoutBtn) {
-          logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("userEmail");
-            window.location.reload(); // Refresh page -> Returns to 0 progress
-          });
-        }
-      });
+      }
     </script>
   </body>
 </html>
